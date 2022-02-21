@@ -1,0 +1,26 @@
+// For a detailed explanation regarding each configuration property, visit:
+// https://www.typescriptlang.org/tsconfig
+
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "module": "CommonJS",
+    "target": "es5",
+    "jsx": "react",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "allowUnreachableCode": false
+  },
+  "exclude": ["**/tests/*"],
+//  "paths": {
+//    "import-png": [
+//      "types/import-png"
+//    ]
+//  },
+//  "typeRoots": [
+//    "types",
+//    "node_modules/@ types"
+//  ]
+}
