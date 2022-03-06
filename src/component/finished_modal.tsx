@@ -1,36 +1,74 @@
-import React from "react";
-import {Button, Modal} from "react-bootstrap";
+import React, {useState} from "react";
+import {Button} from "react-bootstrap";
+import {score} from "./keypad";
+import {exportComponentAsJPEG} from "react-component-export-image";
 
 export interface FinishedModalProps {
+    timeTaken: number
+    score: score
     clear: any
     success: boolean
     show: boolean
+    timerRef: any
+    currentStreak: number
+    maxStreak: number
 }
 
 export const FinishedModal: React.FC<FinishedModalProps> = (props: FinishedModalProps) => {
-    const {success, show, clear} = props
-
+    const {success, clear, score, timeTaken, timerRef, currentStreak, maxStreak} = props
+    let show = props.show
     const reset = () => {
         clear()
+        show = false
     }
 
-    const message = success ? "Well done" : "Try again"
+    const [showCopyMsg, setShowCopyMsg] = useState(false);
+    const [msg, setMsg] = useState("");
+    let minutes = Math.floor(timeTaken / 60)
+    let seconds = timeTaken % 60
+    let timeMessage = `${minutes < 10 ? "0" + minutes : {minutes}}:${seconds < 10 ? "0" + seconds : seconds}`
+    async function copyToClipboard() {
 
-    const buttons = success ? null : <div className={"mt-3"}>
-        <Button onClick={clear} className={"btn"}>Try Again</Button>
-        <Button className={"btn"}>I've done my Best</Button>
-    </div>
+        const shareString = `🔢 ${new Date(Date.now()).toLocaleString().split(',')[0]} 🔢
+${success ? `Today's Time: 🎉 ${timeMessage} 🎉` : ""}
+https://www.jumble-game.co.uk`;
 
-    return <Modal ariaHideApp={false}
-                  show={show}
-                  aria-labelledby="contained-modal-title-vcenter"
-                  contentLabel="Example Modal">
-        <div className={"p-3 h-75 d-flex flex-column align-items-center justify-content-around"}>
-            <h1 className={"grey-text"}>You have finished</h1>
-            <div>
-                {message}
-            </div>
+        setMsg("Copied to clipboard!");
+        setShowCopyMsg(true);
+        setTimeout(() => setShowCopyMsg(false), 2000);
+        if ("clipboard" in navigator) {
+            return await navigator.clipboard.writeText(shareString);
+        } else {
+            return document.execCommand("copy", true, shareString);
+        }
+    }
+
+    const message = success ? `Great Work - you solved it in ${timeTaken} seconds` : "Unlucky this time"
+
+    const copyMessage = showCopyMsg ? <span>{msg}</span> : null
+
+    const buttons = success ?
+        <div className={"mt-3"}>
+            <Button onClick={() => copyToClipboard()} className={"btn"}>Share</Button>
+            <div>{copyMessage}</div>
+        </div>
+        : <div className={"mt-3"}>
+            <Button onClick={reset} className={"btn"}>Try Again</Button>
+        </div>
+
+    const className = show ? "modal-cont display-block" : "modal-cont display-none"
+
+    return <div className={className}>
+        <div className={"p-3 modal-main-cont d-flex flex-column justify-content-around align-items-center"}>
+
+            <h2>{message}</h2>
+            <h4><em>Games played:</em> {score.gamesPlayed}</h4>
+            <h4><em>Games won:</em> {score.gamesWon}</h4>
+            <h4><em>Average Time:</em> {score.gamesWon > 0 ? Math.round(score.averageTime) + " Seconds" : "N/A"}</h4>
+            <h4><em>Best Score:</em> {score.gamesWon > 0 ? score.bestTime + " Seconds" : "N/A"}</h4>
+            <h4><em>Streak:</em> {currentStreak}</h4>
+            <h4><em>Max Streak:</em> {maxStreak}</h4>
             {buttons}
         </div>
-    </Modal>
+    </div>
 }

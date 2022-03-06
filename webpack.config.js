@@ -12,7 +12,7 @@ module.exports = {
     },
     devServer: {
         static: path.resolve(__dirname, 'dist'),
-        port: 3000,
+        port: process.env.PORT || 3000,
         open: true,
         historyApiFallback: true,
         allowedHosts: ["localhost", "127.0.0.1"]
@@ -52,7 +52,7 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: 'src/index.ejs',
             templateParameters: {
-                pageTitle: 'Numble',
+                pageTitle: 'Jumble - A Daily Anagram Puzzle',
             },
         }),
     ],
