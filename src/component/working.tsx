@@ -14,14 +14,11 @@ export const Working: React.FC<WorkingProps> = (props: WorkingProps) => {
     const {totals} = props
 
 
-    return         <div className="display" id="display">
-          <span className="hint">
-            {totals.total}
-              {totals.operation}
-              {totals.next}
-          </span>
-        <span className="total">
-            {totals.next ?? totals.total ?? 0}
-          </span>
-    </div>
+    return <div className="display" id="display">
+              <span className="mb-3 total">
+                  {totals.total}
+                  {totals.operation}
+                  {totals.next}
+              </span>
+           </div>
 }
