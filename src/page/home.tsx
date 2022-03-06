@@ -42,8 +42,8 @@ export class Home extends React.Component<RouteComponentProps, HomeProps> {
             user: userId,
             isFetching: true,
             letters: {
-                jumble: null,
-                target: null
+                jumble: "",
+                target: ""
             },
             showModal: true,
             showScoresModal: false,
