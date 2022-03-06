@@ -20,7 +20,7 @@ interface HomeProps {
 }
 
 interface letters {
-    jumble: string[]
+    jumble: string
     target: string
 }
 
@@ -42,7 +42,7 @@ export class Home extends React.Component<RouteComponentProps, HomeProps> {
             user: userId,
             isFetching: true,
             letters: {
-                jumble: [],
+                jumble: null,
                 target: null
             },
             showModal: true,
@@ -58,8 +58,8 @@ export class Home extends React.Component<RouteComponentProps, HomeProps> {
     async fetchNumbers() {
         try {
             this.setState({...this.state, isFetching: true});
-            // const response = await axios.get("https://numble-game.herokuapp.com/numbers");
-            this.setState({letters: {jumble: ["m","e","i","g","r","a","n","t","s"], target: "emigrants"}, isFetching: false});
+            const response = await axios.get("https://numble-game.herokuapp.com/letters");
+            this.setState({letters: response.data, isFetching: false});
         } catch (e) {
             console.log(e);
             this.setState({...this.state, isFetching: false});
@@ -84,7 +84,7 @@ export class Home extends React.Component<RouteComponentProps, HomeProps> {
                              show={this.state.showScoresModal}/>
                 <KeyPad
                     userId={this.state.user}
-                    jumble={this.state.letters.jumble}
+                    jumble={this.state.letters.jumble.split("")}
                     target={this.state.letters.target}
                 />
             </div>

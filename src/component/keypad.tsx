@@ -1,22 +1,16 @@
-import React, {useEffect, useRef, useState} from "react"
+import React, {useState} from "react"
 import {Letter} from "./letter";
-import {Working} from "./working";
-import calculate from "../utils/calculate";
 import {FinishedModal} from "./finished_modal";
-import {CountdownCircleTimer} from 'react-countdown-circle-timer'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import ReactGA, {set} from 'react-ga';
+import ReactGA from 'react-ga';
+import {faBackspace, faRefresh,} from '@fortawesome/free-solid-svg-icons'
+import Pause from "./pause";
+import Play from "./plat";
+import Timer from "react-compound-timerv2";
 
 const TRACKING_ID = "UA-221463714-1"; // YOUR_OWN_TRACKING_ID
 
 ReactGA.initialize(TRACKING_ID);
-import {
-    faBackspace,
-    faRefresh,
-} from '@fortawesome/free-solid-svg-icons'
-import Pause from "./pause";
-import Play from "./plat";
-import Timer from "react-compound-timerv2";
 
 interface finished {
     finished: boolean,
