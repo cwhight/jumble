@@ -207,14 +207,14 @@ export const KeyPad: React.FC<KeyPadProps> = (props: KeyPadProps) => {
     };
 
     let newLetters = typedLetters.map((letter, i) => {
-        return <Letter solved={solved} solution={true} isPlaying={isPlaying}
+        return <Letter flip={solved} solved={solved} solution={true} isPlaying={isPlaying}
                        onClick={() => {
                        }} value={letter}
                        used={false}/>
     })
 
     let letters = jumble.map((letter, i) => {
-        return <Letter solved={solved} solution={false} isPlaying={isPlaying}
+        return <Letter flip={false} solved={solved} solution={false} isPlaying={isPlaying}
                 onClick={() => handleClick(letter, i+1)} value={letter}
                 used={usedKeys.includes(i+1)}/>
     })
@@ -222,7 +222,7 @@ export const KeyPad: React.FC<KeyPadProps> = (props: KeyPadProps) => {
     let missing = 8 - typedLetters.length
 
     for (let i = 0; i <= missing; i++) {
-        newLetters.push(<Letter solved={solved} solution={true} isPlaying={isPlaying}
+        newLetters.push(<Letter flip={false} solved={solved} solution={true} isPlaying={isPlaying}
                                 onClick={() => {
                                 }} value={""}
                                 used={false}/>)

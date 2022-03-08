@@ -8,16 +8,19 @@ export interface LetterProps extends ButtonProps {
     used: boolean
     solution: boolean
     solved: boolean
+    flip: boolean
 }
 
 export const Letter: React.FC<LetterProps> = (props: LetterProps) => {
-    var {value, used, onClick, isPlaying, solution, solved} = props
+    var {value, used, onClick, isPlaying, solution, solved, flip = false} = props
 
     const click = () => {
         if (!used) {
             onClick()
         }
     }
-
-    return <button onClick={click} className={`clickable p-2 mb-2 ${used ? "used" : ""} ${solution ? "newNum" : "smallNum"}`}>{ isPlaying || solved ? value : ""}</button>
+    return (
+        <button data-animation="once" onClick={click}
+                className={`${flip ? "flip" :""} ${value == ""? "" : "filled"} clickable p-2 mb-2 ${used ? "used" : ""} ${solution ? "newNum" : "smallNum"}`}>{isPlaying || solved ? value : ""}</button>
+    )
 }
