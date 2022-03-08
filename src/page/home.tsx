@@ -1,5 +1,5 @@
 import React from "react";
-import {Link, RouteComponentProps} from "@reach/router";
+import {RouteComponentProps} from "@reach/router";
 import Cookies from 'js-cookie';
 import {KeyPad, score} from "../component/keypad";
 import axios from "axios"

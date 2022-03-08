@@ -62,6 +62,7 @@ export const KeyPad: React.FC<KeyPadProps> = (props: KeyPadProps) => {
 
     const [currentStreak, setCurrentStreak] = useState<number>(JSON.parse(localStorage.getItem("currentStreak")) as number || 0)
     const [maxStreak, setMaxStreak] = useState<number>(JSON.parse(localStorage.getItem("maxStreak")) as number || 0)
+    const [update, setUpdate] = useState(false)
 
     let lastPlayed = localStorage.getItem("lastPlayed")
     const lastWon = parseInt(localStorage.getItem("lastWon"))
@@ -86,6 +87,7 @@ export const KeyPad: React.FC<KeyPadProps> = (props: KeyPadProps) => {
     const clear = () => {
         cacheTypedLetters([])
         cacheUsedKeys([])
+        setUpdate(!update)
     }
 
     if (lastPlayedInt < today && !hasBeenResetToday) {
@@ -187,6 +189,7 @@ export const KeyPad: React.FC<KeyPadProps> = (props: KeyPadProps) => {
             cacheUsedKeys(usedKeys)
             typedLetters.pop()
             cacheTypedLetters(typedLetters)
+            setUpdate(!update)
             return
         }
 
@@ -198,6 +201,8 @@ export const KeyPad: React.FC<KeyPadProps> = (props: KeyPadProps) => {
         if (typedLetters.join("") == target) {
             gameOver(true)
         }
+
+        setUpdate(!update)
         return
     };
 
