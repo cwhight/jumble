@@ -9,7 +9,7 @@ import Play from "./plat";
 import Timer from "react-compound-timerv2";
 import {HintsModal} from "./hints_modal";
 
-const TRACKING_ID = "UA-221463714-1"; // YOUR_OWN_TRACKING_ID
+const TRACKING_ID = "UA-222525627-1"; // YOUR_OWN_TRACKING_ID
 
 ReactGA.initialize(TRACKING_ID);
 

@@ -173,12 +173,12 @@ h1 {
   background-color: transparent !important;
 }
 
-.clickable:active .front {
-  transform: translateY(-2px);
-}
+//.clickable:active .front {
+//  transform: translateY(-2px);
+//}
 
 .clickable:hover {
-  transform: translateY(-2px);
+  //transform: translateY(-2px);
   cursor: pointer;
 }
 
