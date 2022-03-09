@@ -62,7 +62,7 @@ https://www.jumble-game.co.uk`;
 
     const buttons = success ?
         <div className={"mt-3"}>
-            <Button onClick={() => copyToClipboard()} className={"btn"}>Share</Button>
+            <Button onClick={() => copyToClipboard()} className={"w-100 btn"}>Share</Button>
             <div>{copyMessage}</div>
         </div>
         : <div className={"mt-3"}>
@@ -72,9 +72,9 @@ https://www.jumble-game.co.uk`;
     const className = show ? "modal-cont display-block" : "modal-cont display-none"
 
     return <div className={className} >
-        <div className={"p-3 modal-main-cont d-flex flex-column justify-content-around align-items-center"}>
+        <div className={"p-3 modal-main-cont d-flex flex-column justify-content-around"}>
 
-            <h2>{message}</h2>
+            <h2 className={"text-center"}>{message}</h2>
             <h4><em>Games played:</em> {score.gamesPlayed}</h4>
             <h4><em>Games won:</em> {score.gamesWon}</h4>
             <h4><em>Average Time:</em> {score.gamesWon > 0 ? Math.round(score.averageTime) + " Seconds" : "N/A"}</h4>
