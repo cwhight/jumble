@@ -24,11 +24,12 @@ export const FirstModal: React.FC<FirstModalProps> = (props: FirstModalProps) =>
     const className = show ? "modal-cont display-block" : "modal-cont display-none"
 
     return <div className={className}>
-        <div className={"p-3 modal-main-cont d-flex flex-column justify-content-around align-items-center"}>
+        <div className={"text-center p-3 modal-main-cont d-flex flex-column justify-content-around align-items-center"}>
 
             <h2>Welcome to Jumble!</h2>
             <p>A daily anagram</p>
-            <p>You begin with nine letter word scrambled</p>
+            <p>You begin with nine letter word scrambled. You can choose to reveal any letter if you're stuck.</p>
+            <p>Just click on the letter you'd like to reveal. This will end your streak though!</p>
             <p>Solve the anagram to solve the Jumble</p>
             <p>Try to beat your best time!</p>
             {buttons}

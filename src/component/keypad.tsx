@@ -7,6 +7,7 @@ import {faBackspace, faRefresh,} from '@fortawesome/free-solid-svg-icons'
 import Pause from "./pause";
 import Play from "./plat";
 import Timer from "react-compound-timerv2";
+import {HintsModal} from "./hints_modal";
 
 const TRACKING_ID = "UA-221463714-1"; // YOUR_OWN_TRACKING_ID
 
@@ -35,8 +36,11 @@ export const KeyPad: React.FC<KeyPadProps> = (props: KeyPadProps) => {
     const {userId, target, jumble} = props
 
     const [isPlaying, setIsPlaying] = useState<boolean>(false)
-    const [typedLetters, setTypedLetters] = useState<string[]>(JSON.parse(localStorage.getItem("typedLetters")) as string[] || [])
 
+    const [hints, setHints] = useState<string[]>(JSON.parse(localStorage.getItem("hints")) as string[] || ["","","","","","","","",""])
+    const [hintKeys, setHintKeys] = useState<number[]>(JSON.parse(localStorage.getItem("hintKeys")) as number[] ||[])
+
+    const [typedLetters, setTypedLetters] = useState<string[]>(JSON.parse(localStorage.getItem("typedLetters")) as string[] || ["","","","","","","","",""])
     const [usedKeys, setUsedKeys] = useState<number[]>(JSON.parse(localStorage.getItem("usedKeys")) as number[] || [])
 
     const parsedElapsedTime = JSON.parse(localStorage.getItem("elapsedTime")) as number || 0
@@ -64,6 +68,9 @@ export const KeyPad: React.FC<KeyPadProps> = (props: KeyPadProps) => {
     const [maxStreak, setMaxStreak] = useState<number>(JSON.parse(localStorage.getItem("maxStreak")) as number || 0)
     const [update, setUpdate] = useState(false)
 
+    const [showHintsModal, setShowHintsModal] = useState(false)
+    const [hintIndex, setHintIndex] = useState(10)
+
     let lastPlayed = localStorage.getItem("lastPlayed")
     const lastWon = parseInt(localStorage.getItem("lastWon"))
     let today = new Date().setHours(0, 0, 0, 0)
@@ -73,6 +80,16 @@ export const KeyPad: React.FC<KeyPadProps> = (props: KeyPadProps) => {
     const cacheTypedLetters = (letters: string[]) => {
         setTypedLetters(letters)
         localStorage.setItem("typedLetters", JSON.stringify(letters))
+    }
+
+    const cacheHints = (hints: string[]) => {
+        setHints(hints)
+        localStorage.setItem("hints", JSON.stringify(hints))
+    }
+
+    const cacheHintKeys = (keys: number[]) => {
+        setHintKeys(keys)
+        localStorage.setItem("hintKeys", JSON.stringify(keys))
     }
 
     const cacheUsedKeys = (keys: number[]) => {
@@ -85,15 +102,17 @@ export const KeyPad: React.FC<KeyPadProps> = (props: KeyPadProps) => {
     }
 
     const clear = () => {
-        cacheTypedLetters([])
+        cacheTypedLetters(["","","","","","","","",""])
         cacheUsedKeys([])
         setUpdate(!update)
     }
 
     if (lastPlayedInt < today && !hasBeenResetToday) {
-        cacheTypedLetters([])
+        cacheTypedLetters(["","","","","","","","",""])
         cacheUsedKeys([])
         setSolved(false)
+        cacheHints(["","","","","","","","",""])
+        cacheHintKeys([])
         localStorage.setItem("solved", "false")
         localStorage.setItem("todaysTime", "0")
         setElapsedTimeState(0)
@@ -125,11 +144,15 @@ export const KeyPad: React.FC<KeyPadProps> = (props: KeyPadProps) => {
         localStorage.setItem("todaysTime", elapsedTimeState.toString())
         saveScore(success, elapsedTimeState)
         let newStreak: number
-        if (lastWon > yesterday) {
+
+        if (hintKeys.length > 0) {
+            newStreak = 0
+        } else if (lastWon > yesterday) {
             newStreak = currentStreak + 1;
         } else {
             newStreak = 1
         }
+
         localStorage.setItem("lastWon", JSON.stringify(Date.now()))
 
         localStorage.setItem("currentStreak", newStreak.toString())
@@ -147,6 +170,7 @@ export const KeyPad: React.FC<KeyPadProps> = (props: KeyPadProps) => {
         localStorage.setItem("solved", "true")
 
         setIsPlaying(false)
+        showModalEnd()
     }
 
     const saveScore = (success: boolean, timeTaken: number) => {
@@ -187,13 +211,13 @@ export const KeyPad: React.FC<KeyPadProps> = (props: KeyPadProps) => {
         if (value == "<-") {
             usedKeys.pop()
             cacheUsedKeys(usedKeys)
-            typedLetters.pop()
+            typedLetters[usedKeys.length] = ""
             cacheTypedLetters(typedLetters)
             setUpdate(!update)
             return
         }
 
-        typedLetters.push(value)
+        typedLetters[usedKeys.length] = value
         cacheTypedLetters(typedLetters)
         usedKeys.push(key)
         cacheUsedKeys(usedKeys)
@@ -206,27 +230,44 @@ export const KeyPad: React.FC<KeyPadProps> = (props: KeyPadProps) => {
         return
     };
 
+    const erase = (index: number) => {
+        if (index < 0 ) {
+            return
+        }
+
+        if (hintKeys.includes(usedKeys[index])) {
+            erase(index - 1)
+        } else {
+
+        }
+    }
+
     let newLetters = typedLetters.map((letter, i) => {
-        return <Letter flip={solved} solved={solved} solution={true} isPlaying={isPlaying}
-                       onClick={() => {
-                       }} value={letter}
+        return <Letter hint={false} flip={solved} solved={solved} solution={true} isPlaying={isPlaying}
+                       onClick={() => getHint(i)} value={letter}
                        used={false}/>
     })
 
     let letters = jumble.map((letter, i) => {
-        return <Letter flip={false} solved={solved} solution={false} isPlaying={isPlaying}
+        return <Letter hint={false} flip={false} solved={solved} solution={false} isPlaying={isPlaying}
                 onClick={() => handleClick(letter, i+1)} value={letter}
                 used={usedKeys.includes(i+1)}/>
     })
 
-    let missing = 8 - typedLetters.length
+    let hintComps = hints.map((letter, i) => {
+        return <Letter hint={true} flip={false} solved={solved} solution={false} isPlaying={isPlaying}
+                       onClick={() => {}} value={letter}
+                       used={false}/>
+    })
 
-    for (let i = 0; i <= missing; i++) {
-        newLetters.push(<Letter flip={false} solved={solved} solution={true} isPlaying={isPlaying}
-                                onClick={() => {
-                                }} value={""}
-                                used={false}/>)
-    }
+    // let missing = 8 - typedLetters.length
+
+    // for (let i = 0; i <= missing; i++) {
+    //     newLetters.push(<Letter flip={false} solved={solved} solution={true} isPlaying={isPlaying}
+    //                             onClick={() => {
+    //                             }} value={""}
+    //                             used={false}/>)
+    // }
 
     const play = () => {
         localStorage.setItem("lastPlayed", JSON.stringify(Date.now()))
@@ -237,15 +278,40 @@ export const KeyPad: React.FC<KeyPadProps> = (props: KeyPadProps) => {
         setIsPlaying(!isPlaying)
     }
 
+    const getHint = (index: number) => {
+        setHintIndex(index)
+        setShowHintsModal(true)
+    }
+
+    const showHint = () => {
+        const letter = target[hintIndex]
+        const key = jumble.indexOf(letter) + 1
+        hintKeys.push(key)
+        cacheHintKeys(hintKeys)
+        hints[hintIndex] = letter
+        cacheHints(hints)
+        setShowHintsModal(false)
+    }
+
+    const [showModal, setShowModal] = useState<boolean>(false)
+    const showModalEnd = () => {
+        setTimeout(()=> {
+            setShowModal(true)
+        }, 3000)
+
+    }
+
     let timerRef = React.createRef<HTMLDivElement>()
     const form =
         <div className={"game-wrapper h-100 d-flex flex-column justify-content-around align-items-center"}>
             <div>
-                <FinishedModal currentStreak={currentStreak} maxStreak={maxStreak}
+                <FinishedModal
+                    hints={hints}
+                    currentStreak={currentStreak} maxStreak={maxStreak}
                                timerRef={timerRef} timeTaken={elapsedTimeState} score={scores}
                                clear={() => {
                                }}
-                               show={finished.finished} success={finished.success}/>
+                               show={showModal} success={finished.success}/>
 
                 <div ref={timerRef} className={`timer-wrapper mb-3`}>
                     <Timer
@@ -288,7 +354,11 @@ export const KeyPad: React.FC<KeyPadProps> = (props: KeyPadProps) => {
             <div className="game-board d-flex flex-column justify-content-around">
                 <div className={"d-flex flex-column justify-content-around"}>
                     <div className={"d-flex justify-content-end"}>
+                        {hintComps}
+                    </div>
+                    <div className={"d-flex justify-content-end"}>
                         {newLetters}
+                        <HintsModal show={showHintsModal} close={() => setShowHintsModal(false)} showHint={()=>showHint()} index={hintIndex}/>
                     </div>
                     <div className={"d-flex justify-content-end"}>
                         {letters}

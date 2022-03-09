@@ -20,6 +20,16 @@ export const ScoresModal: React.FC<ScoresModalProps> = (props: ScoresModalProps)
         let seconds = todaysScore % 60
     let timeMessage = `${minutes < 10 ? "0" + minutes : {minutes}}:${seconds < 10 ? "0" + seconds : seconds}`
 
+    let hints = JSON.parse(localStorage.getItem("hints")) as string [] || ["","","","","","","","",""]
+    let tiles: string[] = []
+    for (let i=0; i<9;i++) {
+        if(hints[i] == "") {
+            tiles.push(`🟩`)
+        } else {
+            tiles.push("🟧")
+        }
+    }
+
     const streak = localStorage.getItem("currentStreak")
     const maxStreak = localStorage.getItem("maxStreak")
 
@@ -28,10 +38,9 @@ export const ScoresModal: React.FC<ScoresModalProps> = (props: ScoresModalProps)
 
     async function copyToClipboard() {
 
-        const shareString = `🔢 ${new Date(Date.now()).toLocaleString().split(',')[0]} 🔢
-${
-            todaysScore != 0 ? `Today's Time: 🎉 ${timeMessage} 🎉` : ""
-        }
+        const shareString = `🔤 ${new Date(Date.now()).toLocaleString().split(',')[0]} 🔤
+${todaysScore != 0 ? `Today's Time: 🎉 ${timeMessage} 🎉` : ""}
+${todaysScore != 0 ? tiles.join(""): ""}
 https://www.jumble-game.co.uk`;
 
         setMsg("Copied to clipboard!");

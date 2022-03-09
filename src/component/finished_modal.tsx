@@ -12,14 +12,24 @@ export interface FinishedModalProps {
     timerRef: any
     currentStreak: number
     maxStreak: number
+    hints: string[]
 }
 
 export const FinishedModal: React.FC<FinishedModalProps> = (props: FinishedModalProps) => {
-    const {success, clear, score, timeTaken, timerRef, currentStreak, maxStreak} = props
+    const {success, clear, score, timeTaken, timerRef, currentStreak, maxStreak, hints} = props
     let show = props.show
     const reset = () => {
         clear()
         show = false
+    }
+
+    let tiles: string[] = []
+    for (let i=0; i<9;i++) {
+        if(hints[i] == "") {
+            tiles.push(`🟩`)
+        } else {
+            tiles.push("🟧")
+        }
     }
 
     const [showCopyMsg, setShowCopyMsg] = useState(false);
@@ -27,10 +37,13 @@ export const FinishedModal: React.FC<FinishedModalProps> = (props: FinishedModal
     let minutes = Math.floor(timeTaken / 60)
     let seconds = timeTaken % 60
     let timeMessage = `${minutes < 10 ? "0" + minutes : {minutes}}:${seconds < 10 ? "0" + seconds : seconds}`
+
+
     async function copyToClipboard() {
 
-        const shareString = `🔢 ${new Date(Date.now()).toLocaleString().split(',')[0]} 🔢
+        const shareString = `🔤 ${new Date(Date.now()).toLocaleString().split(',')[0]} 🔤
 ${success ? `Today's Time: 🎉 ${timeMessage} 🎉` : ""}
+${tiles.join("")}
 https://www.jumble-game.co.uk`;
 
         setMsg("Copied to clipboard!");
@@ -58,7 +71,7 @@ https://www.jumble-game.co.uk`;
 
     const className = show ? "modal-cont display-block" : "modal-cont display-none"
 
-    return <div className={className}>
+    return <div className={className} >
         <div className={"p-3 modal-main-cont d-flex flex-column justify-content-around align-items-center"}>
 
             <h2>{message}</h2>

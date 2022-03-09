@@ -9,10 +9,11 @@ export interface LetterProps extends ButtonProps {
     solution: boolean
     solved: boolean
     flip: boolean
+    hint: boolean
 }
 
 export const Letter: React.FC<LetterProps> = (props: LetterProps) => {
-    var {value, used, onClick, isPlaying, solution, solved, flip = false} = props
+    var {value, used, onClick, isPlaying, solution, solved, flip, hint} = props
 
     const click = () => {
         if (!used) {
@@ -21,6 +22,6 @@ export const Letter: React.FC<LetterProps> = (props: LetterProps) => {
     }
     return (
         <button data-animation="once" onClick={click}
-                className={`${flip ? "flip" :""} ${value == ""? "" : "filled"} clickable p-2 mb-2 ${used ? "used" : ""} ${solution ? "newNum" : "smallNum"}`}>{isPlaying || solved ? value : ""}</button>
+                className={`${(hint && value == "" ? "transparent" : "")} ${hint ? "hint" : ""} ${flip ? "flip" :""} ${value == ""? "" : "filled"} clickable p-2 mb-2 ${used ? "used" : ""} ${solution ? "newNum" : "smallNum"}`}>{isPlaying || solved ? value : ""}</button>
     )
 }
