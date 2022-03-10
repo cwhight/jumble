@@ -84,8 +84,8 @@ export class Home extends React.Component<RouteComponentProps, HomeProps> {
                              show={this.state.showScoresModal}/>
                 <KeyPad
                     userId={this.state.user}
-                    jumble={this.state.letters.jumble.split("")}
-                    target={this.state.letters.target}
+                    jumble={this.state.letters.jumble.toUpperCase().split("")}
+                    target={this.state.letters.target.toUpperCase()}
                 />
             </div>
         );
